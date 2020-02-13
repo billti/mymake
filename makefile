@@ -14,11 +14,12 @@ BINDIR=bin\$(_BUILD)^\
 !ENDIF
 
 LNK=link.exe
+PCH=$(BINDIR)common.pch
 
 # /Zi to generate PDB file. /Gy for funtion level linking. /EHsc for C++ exceptions
 # /Yu to use precompiled header. /Fp for precompiled header path.
 # /Fo for obj file path. /Fd for pdb file path.
-CPPFLAGS=/Zi /EHsc /Yucommon.h /Fp$(BINDIR)common.pch /Fo$(BINDIR) /Fd$(BINDIR)
+CPPFLAGS=/Zi /EHsc /Yucommon.h /Fp$(PCH) /Fo$(BINDIR) /Fd$(BINDIR)
 # C++17 with compliance and extra security checks. Production level warnings/errors.
 CPPFLAGS=$(CPPFLAGS) /std:c++17 /sdl /permissive- /W3 /WX /Zc:inline
 LNKFLAGS=/DEBUG /NOLOGO
@@ -42,14 +43,14 @@ $(BINDIR)myapp.exe: $(OBJS)
   $(LNK) $(LNKFLAGS) /OUT:$@ $** $(LIBS)
 
 # Create the precompiled header and corresponding object file
-$(BINDIR)common.obj $(BINDIR)common.pch: src\common.cpp src\common.h
+$(BINDIR)common.obj $(PCH): src\common.cpp src\common.h
   $(CPP) /c /Yccommon.h $(CPPFLAGS) src\common.cpp
 
 # Below are general .obj files with headers explicitly stated as dependencies
-$(BINDIR)utils.obj: $(BINDIR)common.pch src\utils.cpp src\utils.h
+$(BINDIR)utils.obj: $(PCH) src\utils.cpp src\utils.h
   $(CPP) /c $(CPPFLAGS) src\utils.cpp
 
-$(BINDIR)main.obj: $(BINDIR)common.pch src\main.cpp src\utils.h
+$(BINDIR)main.obj: $(PCH) src\main.cpp src\utils.h
   $(CPP) /c $(CPPFLAGS) src\main.cpp
 
 clean:
