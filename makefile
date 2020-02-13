@@ -26,7 +26,7 @@ LNKFLAGS=/DEBUG /NOLOGO
 # For release, enable optimizations and disable asserts. Debug uses the debug CRT.
 # /OPT:REF,ICF off by default when generating debug info.
 # /OPT:REF also disables incremental linking (i.e. no need to specify for release).
-!IFDEF RELEASE
+!IF "$(_BUILD)" == "release"
 CPPFLAGS=$(CPPFLAGS) /O2 /Gy /MD /DNDEBUG
 LNKFLAGS=$(LNKFLAGS) /OPT:REF,ICF
 !ELSE
@@ -37,7 +37,7 @@ LNKFLAGS=$(LNKFLAGS) /INCREMENTAL
 OBJS=$(BINDIR)common.obj $(BINDIR)utils.obj $(BINDIR)main.obj
 LIBS=kernel32.lib user32.lib advapi32.lib
 
-# Build the app with all the object files
+# First target is the default. $@ is the target path. $** is all dependents.
 $(BINDIR)myapp.exe: $(OBJS)
   $(LNK) $(LNKFLAGS) /OUT:$@ $** $(LIBS)
 
