@@ -42,11 +42,13 @@ LIBS=kernel32.lib user32.lib advapi32.lib
 $(BINDIR)myapp.exe: $(OBJS)
   $(LNK) $(LNKFLAGS) /OUT:$@ $** $(LIBS)
 
-# Create the precompiled header and corresponding object file
+# List translation units explicitly, so header dependencies can be stated.
+
+# Create the precompiled header and corresponding object file.
 $(BINDIR)common.obj $(PCH): src\common.cpp src\common.h
   $(CPP) /c /Yccommon.h $(CPPFLAGS) src\common.cpp
 
-# Below are general .obj files with headers explicitly stated as dependencies
+# Remaining .obj files have the precompiled header as a dependency.
 $(BINDIR)utils.obj: $(PCH) src\utils.cpp src\utils.h
   $(CPP) /c $(CPPFLAGS) src\utils.cpp
 
